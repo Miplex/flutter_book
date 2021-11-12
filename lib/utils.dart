@@ -1,0 +1,36 @@
+/// ********************************************************************************************************************
+/// A few global utility-type things needed by multiple places in the codebase.
+/// ********************************************************************************************************************
+
+
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'base_model.dart';
+
+/// The application's document directory for contact avatar image files and database files.
+
+  Directory? docsDir;
+
+
+Future selectDate(BuildContext inContext, BaseModel inModel, String inDateString) async{
+
+  // Default to today's date, assuming we're adding.
+  DateTime initialDate = DateTime.now();
+
+  // If editing, set the initialDate to the current birthday, if any.
+  if(inDateString != null){
+    List dateParts = inDateString.split(',');
+// Create a DateTime using the year, month and day from dateParts.
+  initialDate = DateTime(int.parse(dateParts[0]), int.parse(dateParts[1]), int.parse(dateParts[2]));
+  }
+
+  // Now request the date.
+  DateTime? picked = await showDatePicker(context: inContext, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(2100));
+
+  if(picked != null){
+    inModel.setChosenDate(DateFormat.yMMMMd('en_US').format(picked.toLocal()));
+
+    return '${picked.year},${picked.month},${picked.day}';
+  }
+}
